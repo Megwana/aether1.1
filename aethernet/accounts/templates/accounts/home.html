@@ -1,7 +1,12 @@
 {% extends "base.html" %}
 {% block content %}
-    <h1>Welcome to Aethernet</h1>
-    
+    <h1>Welcome to AetherNet</h1>
+    <div class="notifications">
+        <h3>Unread Notifications</h3>
+        {% for notification in notifications %}
+            <p>{{ notification.message }}</p>
+        {% endfor %}
+    </div>
     {% if user.is_authenticated %}
         <p>Hello, {{ user.username }}! You are logged in.</p>
         <a href="{% url 'logout' %}">Logout</a>

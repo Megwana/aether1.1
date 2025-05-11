@@ -54,11 +54,12 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
+LOGIN_URL = '/login/'
 ROOT_URLCONF = 'aethernet.urls'
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / "accounts/static"]
+MEDIA_URL = "/media/"
 
 CSRF_TRUSTED_ORIGINS = [
     "https://8000-megwana-aether11-2lkiwrqisnl.ws-eu118.gitpod.io"
