@@ -1,18 +1,63 @@
 {% extends "base.html" %}
 {% block content %}
     <h1>Welcome to AetherNet</h1>
-    <div class="notifications">
-        <h3>Unread Notifications</h3>
-        {% for notification in notifications %}
-            <p>{{ notification.message }}</p>
-        {% endfor %}
-    </div>
+
+    {% if notifications %}
+        <ul class="notifications">
+            {% for notification in notifications %}
+                <li>{{ notification.message }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No notifications.</p>
+    {% endif %}
+
     {% if user.is_authenticated %}
         <p>Hello, {{ user.username }}! You are logged in.</p>
-        <a href="{% url 'logout' %}">Logout</a>
+        <a href="{% url 'logout' %}" class="button">Logout</a>
     {% else %}
         <p>You are not logged in.</p>
-        <a href="{% url 'login' %}">Login</a> | 
-        <a href="{% url 'register' %}">Register</a>
+        <a href="{% url 'login' %}" class="button">Login</a> | 
+        <a href="{% url 'register' %}" class="button">Register</a>
     {% endif %}
+
+    <h2>Smart HVAC & Rainwater Management</h2>
+
+    <div class="sensor-container">
+        <div class="sensor-box">
+            <p>🌡 Temperature: <span id="temperature">--</span></p>
+        </div>
+        <div class="sensor-box">
+            <p>💧 Humidity: <span id="humidity">--</span></p>
+        </div>
+        <div class="sensor-box">
+            <p>🌧 Rainfall: <span id="rainfall">--</span></p>
+        </div>
+        <div class="sensor-box">
+            <p>🚰 Tank Level: <span id="tankLevel">--</span></p>
+        </div>
+        <div class="sensor-box">
+            <p>⚡ HVAC Load: <span id="hvacLoad">--</span></p>
+        </div>
+        <div class="sensor-box">
+            <p><strong>🛠 System Decision:</strong> <span id="decision">--</span></p>
+        </div>
+    </div>
+    <div class="chart-section">
+        <div class="chart-container">
+            <canvas id="temperatureChart"></canvas>
+        </div>
+        <div class="chart-container">
+            <canvas id="humidityChart"></canvas>
+        </div>
+        <div class="chart-container">
+            <canvas id="tankLevelChart"></canvas>
+        </div>
+    </div>
+        <!-- System Decision -->
+        <div class="sensor-box">
+            <h3>Automated Decision:</h3>
+            <p><strong>🛠 {{ sensor_data.decision }}</strong></p>
+        </div>
+    </section>
 {% endblock %}
