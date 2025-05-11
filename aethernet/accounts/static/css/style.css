@@ -95,10 +95,62 @@ body {
     cursor: pointer;
 }
 
+/* Center & Style the Main Section */
 main {
-    padding-top: 20rem; /* Adjust based on header height */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    min-height: 80vh; /* Pushes content down */
+    padding: 15rem;
 }
 
+/* Header */
+h1 {
+    font-size: 9rem;
+    color: var(--main-color);
+    text-shadow: 0 0 15px var(--main-color);
+    margin-bottom: 2rem;
+}
+
+/* User Greeting */
+p {
+    font-size: 2rem;
+    color: var(--text-color);
+    margin-bottom: 1.5rem;
+}
+
+/* Authentication Links */
+a {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: var(--highlight-color);
+    padding: 1rem 1.5rem;
+    border-radius: 5px;
+    transition: all 0.3s ease-in-out;
+}
+
+a:hover {
+    background: var(--accent-color);
+    box-shadow: 0 0 20px var(--accent-color);
+    color: white;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 600px) {
+    h1 {
+        font-size: 2.5rem;
+    }
+    
+    p {
+        font-size: 1.8rem;
+    }
+
+    a {
+        font-size: 1.6rem;
+    }
+}
 
 footer{
     position: relative;

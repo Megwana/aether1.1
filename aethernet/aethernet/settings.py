@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -54,6 +55,13 @@ ROOT_URLCONF = 'aethernet.urls'
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / "accounts/static"]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://8000-megwana-aether11-is9445dpwnd.ws-eu118.gitpod.io"
+    "https://8000-megwana-aether11-is9445dpwnd.ws-eu118.gitpod.io"
+    "https://" + os.getenv("GITPOD_WORKSPACE_URL", "")
+]
+
 
 TEMPLATES = [
     {

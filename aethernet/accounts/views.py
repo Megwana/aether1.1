@@ -3,6 +3,7 @@ from django.contrib.auth import login, logout
 from .forms import CustomUserCreationForm
 from .models import CustomUser
 from django.contrib.auth.views import LoginView
+from django.views.decorators.csrf import csrf_protect
 
 def home(request):
     return render(request, 'accounts/home.html')
@@ -18,7 +19,7 @@ def register(request):
     else:
         form = CustomUserCreationForm()
     return render(request, 'accounts/register.html', {'form': form})
-    
+
 class CustomLoginView(LoginView):
     template_name = 'registration/login.html'  # ✅ Use correct path
 
