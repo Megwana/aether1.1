@@ -7,12 +7,13 @@ from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Notification
+from django.urls import reverse
 
 @login_required
 def home(request):
     notifications = Notification.objects.filter(user=request.user, is_read=False)
-    return render(request, 'accounts/home.html', {'notifications': notifications})
-    
+    notifications = Notification.objects.filter(user=request.user, is_read=False).select_related("user")
+
 def register(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
@@ -35,7 +36,7 @@ class CustomLoginView(LoginView):
 
 def logout_view(request):
     logout(request)
-    return redirect('/')  # Redirect to home
+    return redirect(reverse('home'))
 
 def custom_authenticate(username, password):
     user = authenticate(username=username, password=password)

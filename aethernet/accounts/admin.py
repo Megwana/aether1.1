@@ -11,3 +11,6 @@ class CustomUserAdmin(admin.ModelAdmin):
 
     approve_users.short_description = "Approve and activate selected users"
 
+# @admin.action(description="Approve and activate selected users")
+# def approve_users(self, request, queryset):
+#     queryset.filter(is_approved=False).update(is_approved=True, is_active=True)

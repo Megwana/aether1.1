@@ -12,16 +12,28 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 import os
+import environ
+
+env = environ.Env()
+env.read_env(os.path.join(Path(__file__).resolve().parent.parent, ".env"))
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+DATABASES = {
+    'default': env.db(default=f'sqlite:///{BASE_DIR}/db.sqlite3')
+}
+
+
+# Initialize environ
+env = environ.Env()
+environ.Env.read_env(os.path.join(BASE_DIR, ".env"))  # Load environment variables
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'SECRET_KEY'
+SECRET_KEY = env("SECRET_KEY")  # Loads from .env file
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -29,7 +41,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
-    "8000-megwana-aether11-2lkiwrqisnl.ws-eu118.gitpod.io"  # ✅ Add this new URL
+    "8000-megwana-aether11-2lkiwrqisnl.ws-eu118.gitpod.io" 
 ]
 
 
@@ -57,10 +69,6 @@ MIDDLEWARE = [
 LOGIN_URL = '/login/'
 ROOT_URLCONF = 'aethernet.urls'
 
-STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / "accounts/static"]
-MEDIA_URL = "/media/"
-
 CSRF_TRUSTED_ORIGINS = [
     "https://8000-megwana-aether11-2lkiwrqisnl.ws-eu118.gitpod.io"
 ]
@@ -87,17 +95,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'aethernet.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
 
 AUTH_USER_MODEL = 'accounts.CustomUser'
 
@@ -135,7 +132,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [BASE_DIR / "accounts/static"]
+MEDIA_URL = "/media/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

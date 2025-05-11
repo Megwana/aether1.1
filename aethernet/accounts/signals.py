@@ -5,5 +5,5 @@ from .models import CustomUser
 @receiver(post_save, sender=CustomUser)
 def auto_approve_superuser(sender, instance, **kwargs):
     if instance.is_superuser and not instance.is_approved:
-        instance.is_approved = True
-        instance.save()
+        CustomUser.objects.filter(pk=instance.pk).update(is_approved=True)
+
