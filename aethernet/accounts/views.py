@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login, logout
+from django.contrib.auth import login, logout, authenticate
 from .forms import CustomUserCreationForm
 from .models import CustomUser
 from django.contrib.auth.views import LoginView
 from django.views.decorators.csrf import csrf_protect
+from django.contrib.auth.decorators import login_required
 
 def home(request):
     return render(request, 'accounts/home.html')
@@ -26,3 +27,13 @@ class CustomLoginView(LoginView):
 def logout_view(request):
     logout(request)
     return redirect('/')  # Redirect to home
+
+def custom_authenticate(username, password):
+    user = authenticate(username=username, password=password)
+    if user and user.is_approved:
+        return user
+    return None
+
+@login_required
+def profile(request):
+    return render(request, 'accounts/profile.html')

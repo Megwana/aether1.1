@@ -26,7 +26,11 @@ SECRET_KEY = 'SECRET_KEY'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '8000-megwana-aether11-is9445dpwnd.ws-eu118.gitpod.io']
+ALLOWED_HOSTS = [
+    "127.0.0.1",
+    "localhost",
+    "8000-megwana-aether11-2lkiwrqisnl.ws-eu118.gitpod.io"  # ✅ Add this new URL
+]
 
 
 # Application definition
@@ -57,11 +61,14 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / "accounts/static"]
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://8000-megwana-aether11-is9445dpwnd.ws-eu118.gitpod.io"
-    "https://8000-megwana-aether11-is9445dpwnd.ws-eu118.gitpod.io"
-    "https://" + os.getenv("GITPOD_WORKSPACE_URL", "")
+    "https://8000-megwana-aether11-2lkiwrqisnl.ws-eu118.gitpod.io"
 ]
 
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+LOGIN_REDIRECT_URL = '/'
 
 TEMPLATES = [
     {
