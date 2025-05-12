@@ -60,15 +60,6 @@ def evaluate_hvac_decision(data):
         return "Redirect excess rainwater to irrigation"
     return "Maintain normal HVAC operation"
 
-# API Routes
-def get_sensor_data(request):
-    data = generate_fake_sensor_data()
-    decision = evaluate_hvac_decision(data)
-    return render(request, "home.html", {"sensor_data": {"sensor_data": data, "decision": decision}})
-    
-    # print("API Response:", response_data)  # Debugging output
-    # return JsonResponse({"sensor_data": data, "decision": decision})
-
 
 def get_live_weather(request):
     """Fetches real-time Newcastle weather data."""
