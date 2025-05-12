@@ -40,9 +40,10 @@
             <p>⚡ HVAC Load: <span id="hvacLoad">--</span></p>
         </div>
         <div class="sensor-box">
-            <p><strong>🛠 System Decision:</strong> <span id="decision">--</span></p>
+            <p><strong>🛠 System Decision:</strong> {{ sensor_data.decision }}</p>
         </div>
     </div>
+    
     <div class="chart-section">
         <div class="chart-container">
             <canvas id="temperatureChart"></canvas>
@@ -54,10 +55,5 @@
             <canvas id="tankLevelChart"></canvas>
         </div>
     </div>
-        <!-- System Decision -->
-        <div class="sensor-box">
-            <h3>Automated Decision:</h3>
-            <p><strong>🛠 {{ sensor_data.decision }}</strong></p>
-        </div>
-    </section>
+
 {% endblock %}

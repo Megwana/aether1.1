@@ -5,6 +5,7 @@ import datetime
 from django.http import JsonResponse
 from paho.mqtt.client import Client
 from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
 
 # MQTT CONFIG
 MQTT_BROKER = "broker.hivemq.com"
@@ -17,10 +18,11 @@ WEATHER_API_URL = "https://api.openweathermap.org/data/2.5/weather?q=Newcastle,U
 
 # MQTT Message Handling
 def handle_mqtt_message(client, userdata, message):
-    """Process incoming MQTT sensor data."""
     try:
         payload = json.loads(message.payload.decode())
-        print("Received MQTT Sensor Data:", payload)
+        print("Received MQTT Sensor Data:", payload)  # Debugging output
+        if "tank_level" not in payload:
+            print("Warning: 'tank_level' is missing in MQTT payload!")
     except Exception as e:
         print("Error processing MQTT data:", e)
 
@@ -32,8 +34,21 @@ mqtt_client.subscribe(MQTT_TOPIC)
 def generate_fake_sensor_data():
     temperature = round(random.uniform(15, 30), 1)
     humidity = round(random.uniform(50, 100), 1)
-    rainfall = random.choice([True, False])
-    return {"temperature": temperature, "humidity": humidity, "rainfall": rainfall}
+    rainfall = bool(random.choice([True, True, False, False])) 
+    
+    # ✅ Ensure tank level increases ONLY when rainfall is True
+    tank_level = round(random.uniform(50, 100), 1) if rainfall else round(random.uniform(0, 50), 1)
+    
+    hvac_load = round(random.uniform(10, 100), 1)
+
+    return {
+        "temperature": temperature,
+        "humidity": humidity,
+        "rainfall": rainfall,
+        "tank_level": tank_level,
+        "hvac_load": hvac_load
+    }
+
 
 # HVAC & Rainwater Automation Logic
 def evaluate_hvac_decision(data):
@@ -47,10 +62,13 @@ def evaluate_hvac_decision(data):
 
 # API Routes
 def get_sensor_data(request):
-    """Returns sensor data & HVAC decision."""
     data = generate_fake_sensor_data()
     decision = evaluate_hvac_decision(data)
-    return JsonResponse({"sensor_data": data, "decision": decision})
+    return render(request, "home.html", {"sensor_data": {"sensor_data": data, "decision": decision}})
+    
+    # print("API Response:", response_data)  # Debugging output
+    # return JsonResponse({"sensor_data": data, "decision": decision})
+
 
 def get_live_weather(request):
     """Fetches real-time Newcastle weather data."""
@@ -64,3 +82,8 @@ def get_live_weather(request):
             "weather": weather_data["weather"][0]["description"]
         })
     return JsonResponse({"error": "Failed to fetch weather data"}, status=500)
+
+@csrf_exempt 
+def get_sensor_data(request):
+    data = generate_fake_sensor_data()
+    return JsonResponse({"sensor_data": data, "decision": evaluate_hvac_decision(data)})
