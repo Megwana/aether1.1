@@ -22,9 +22,8 @@
         <i class="bx bx-menu" id="menu-icon"></i>
 
         <nav class="navbar">
-            <a href="{% url 'home' %}"><i class="bx bx-home"></i> Home</a>
-            <a href="/"><i class="bx bx-bar-chart"></i> Charts</a>
             {% if user.is_authenticated %}
+                <a href="{% url 'home' %}"><i class="bx bx-bar-chart"></i> Dashboard</a>
                 <a href="#"><i class="bx bx-user"></i> Welcome, {{ user.username }}</a>
                 <a href="{% url 'logout' %}"><i class="bx bx-log-out"></i> Logout</a>
             {% else %}

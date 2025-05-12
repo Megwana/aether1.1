@@ -2,26 +2,13 @@
 {% block content %}
     <h1>Welcome to AetherNet</h1>
 
-    {% if notifications %}
-        <ul class="notifications">
-            {% for notification in notifications %}
-                <li>{{ notification.message }}</li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No notifications.</p>
-    {% endif %}
-
     {% if user.is_authenticated %}
-        <p>Hello, {{ user.username }}! You are logged in.</p>
-        <a href="{% url 'logout' %}" class="button">Logout</a>
+        <p>Smart HVAC & Rainwater Management</p>
     {% else %}
         <p>You are not logged in.</p>
         <a href="{% url 'login' %}" class="button">Login</a> | 
         <a href="{% url 'register' %}" class="button">Register</a>
     {% endif %}
-
-    <h2>Smart HVAC & Rainwater Management</h2>
 
     <div class="sensor-container">
         <div class="sensor-box">
@@ -40,7 +27,8 @@
             <p>⚡ HVAC Load: <span id="hvacLoad">--</span></p>
         </div>
         <div class="sensor-box">
-            <p><strong>🛠 System Decision:</strong> {{ sensor_data.decision }}</p>
+            <p><strong>🛠 System Decision:</strong> 
+                <span id="decision">--</span></p>         
         </div>
     </div>
     
