@@ -7,10 +7,10 @@
         <p>Smart HVAC & Rainwater Management</p>
     {% else %}
         <p>You are not logged in.</p>
-        <a href="{% url 'login' %}" class="button">Login</a> | 
+        <a href="{% url 'login' %}" class="button">Login</a>
         <a href="{% url 'register' %}" class="button">Register</a>
     {% endif %}
-
+    <!-- Sensor Data containers -->
     <div class="sensor-container">
         <div class="sensor-box">
             <p>🌡 Temperature: <span id="temperature">--</span></p>
@@ -22,7 +22,7 @@
             <p>🌧 Rainfall: <span id="rainfall">--</span></p>
         </div>
         <div class="sensor-box">
-            <p>🚰 Tank Level: <span id="tankLevel">--</span></p>
+            <p>☔ Tank Level: <span id="tankLevel">--</span></p>
         </div>
         <div class="sensor-box">
             <p>⚡ HVAC Load: <span id="hvacLoad">--</span></p>
@@ -32,12 +32,11 @@
                 <span id="decision">--</span></p>         
         </div>
     </div>
-
-    <!-- Manual Override Button -->
+            <!-- Manual Override Button -->
     <div class="override-section">
         <button id="manualOverrideBtn" class="button">Override Tank Decision</button>
     </div>
-
+    <!-- Data Graphs -->
     <div class="chart-section">
         <div class="chart-container">
             <canvas id="temperatureChart"></canvas>
