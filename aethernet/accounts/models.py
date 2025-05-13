@@ -2,6 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.contrib.auth import get_user_model
 
+
 class CustomUser(AbstractUser):
     is_approved = models.BooleanField(default=False)
 
@@ -11,13 +12,5 @@ class CustomUser(AbstractUser):
             self.is_approved = True
         super().save(*args, **kwargs)
 
+
 User = get_user_model()
-
-class Notification(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, blank=True, null=True)
-    message = models.CharField(max_length=255)
-    is_read = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.message

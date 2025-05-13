@@ -11,6 +11,7 @@
       href="{% static 'css/style.css' %}"
     />
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <meta name="csrf-token" content="{{ csrf_token }}">
   </head>
   <body>
     <header class="header">
@@ -32,14 +33,21 @@
             {% endif %}
         </nav>
     </header>
+
     <main class="main">{% block content %} {% endblock %}</main>
+
     <footer>
       <p>&copy; 2025 AetherNet. All rights reserved.</p>
     </footer>
-      <script>
-        const BASE_URL = window.location.origin;
+
+    <!-- Set Base URL -->
+    <script>
+      const BASE_URL = window.location.origin;
     </script>
+
+    <!-- Load dependencies in correct order -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Ensure jQuery is loaded first -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="{% static 'js/script.js' %}" defer></script>
+    <script src="{% static 'js/script.js' %}" defer></script> <!-- Your custom script -->
   </body>
 </html>

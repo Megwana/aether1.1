@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-
 {% block content %}
     <h1>Welcome to AetherNet</h1>
 
@@ -32,12 +31,7 @@
                 <span id="decision">--</span></p>         
         </div>
     </div>
-
-    <!-- Manual Override Button -->
-    <div class="override-section">
-        <button id="manualOverrideBtn" class="button">Override Tank Decision</button>
-    </div>
-
+    
     <div class="chart-section">
         <div class="chart-container">
             <canvas id="temperatureChart"></canvas>
@@ -49,4 +43,5 @@
             <canvas id="tankLevelChart"></canvas>
         </div>
     </div>
+
 {% endblock %}

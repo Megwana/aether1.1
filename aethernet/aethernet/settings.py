@@ -16,7 +16,7 @@ import environ
 
 env = environ.Env()
 env.read_env(os.path.join(Path(__file__).resolve().parent.parent, ".env"))
-
+SECRET_KEY = env("SECRET_KEY")
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -32,17 +32,15 @@ environ.Env.read_env(os.path.join(BASE_DIR, ".env"))  # Load environment variabl
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env("SECRET_KEY")  # Loads from .env file
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
-    "8000-megwana-aether11-2lkiwrqisnl.ws-eu118.gitpod.io" 
+    "8000-megwana-aether11-lrlwwfgasca.ws-eu118.gitpod.io",  # Correct format
 ]
+
 
 
 # Application definition
@@ -71,7 +69,7 @@ LOGIN_URL = '/login/'
 ROOT_URLCONF = 'aethernet.urls'
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://8000-megwana-aether11-2lkiwrqisnl.ws-eu118.gitpod.io"
+    "https://8000-megwana-aether11-lrlwwfgasca.ws-eu118.gitpod.io",
 ]
 
 AUTHENTICATION_BACKENDS = [
