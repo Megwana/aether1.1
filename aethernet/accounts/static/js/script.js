@@ -105,6 +105,13 @@ document.addEventListener("DOMContentLoaded", () => {
         .then(data => {
             alert(data.new_decision || "Override applied.");
             updateElement("decision", data.new_decision);
+        
+            const btn = document.getElementById("manualOverrideBtn");
+            if (btn && data.new_decision.includes("Stop")) {
+                btn.innerText = "Start Water Redirection";
+            } else if (btn) {
+                btn.innerText = "Stop Water Redirection";
+            }
         })
         .catch(error => {
             console.error("Error during manual override:", error);

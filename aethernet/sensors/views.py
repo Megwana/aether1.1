@@ -5,6 +5,8 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from paho.mqtt.client import Client
 
+redirecting_water = False
+
 # MQTT CONFIG
 MQTT_BROKER = "broker.hivemq.com"
 MQTT_PORT = 1883
@@ -14,7 +16,7 @@ latest_sensor_data = {}
 # Weather API
 WEATHER_API_URL = (
     "https://api.openweathermap.org/data/2.5/weather"
-    "?q=Newcastle,UK"
+    "?id=2641673"
     "&appid=88d566094f90a6035ce3c50a978f0ce8"
     "&units=metric"
 )
@@ -108,14 +110,21 @@ def get_sensor_data(request):
     })
 
 
+
 @csrf_exempt
 def manual_override(request):
-    if request.method == 'POST':
-        # Define the decision message (you can change the logic here)
-        new_decision = "Redirecting excess rainwater to irrigation"  # Example decision
+    global redirecting_water  # So we can modify the global state
 
-        return JsonResponse({
-            'new_decision': new_decision
-        })
-    
-    return JsonResponse({'error': 'Invalid request method'}, status=400)
+    if request.method == 'POST':
+        if redirecting_water:
+            # Turn off redirection
+            new_decision = "Stop redirecting rainwater to avoid overuse"
+            redirecting_water = False
+        else:
+            # Turn on redirection
+            new_decision = "Redirecting excess rainwater to irrigation"
+            redirecting_water = True
+
+        return JsonResponse({'new_decision': new_decision})
+    else:
+        return JsonResponse({'error': 'Invalid request method'}, status=400)
