@@ -25,8 +25,7 @@ This system does the following:
 
 ### Scope
 
-AetherNet will provide a real-time dashboard that visualizes environmental data, simulates tank behavior, and applies HVAC logic based on current weather conditions. It does not include hardware integration at this stage or predictive analytic features.
-
+AetherNet will provide a real-time dashboard that visualises environmental data, simulates tank behaviour, and applies HVAC logic based on current weather conditions. It does not include hardware integration at this stage or predictive analytic features.
 
 ### User Stories & Acceptance Criteria
 
@@ -43,7 +42,7 @@ AetherNet will provide a real-time dashboard that visualizes environmental data,
 ### `/sensors/api/sensor-data/` — `get_sensor_data()`
 
 - Calls the OpenWeatherMap API.
-- Simulates tank behavior:
+- Simulates tank behaviour:
   - **If raining:** Adds water to the tank based on rainfall volume.
   - **If dry:** Simulates water usage and decreases tank volume.
 - Tank level is calculated as a percentage:
@@ -60,7 +59,7 @@ AetherNet will provide a real-time dashboard that visualizes environmental data,
 
 #### **Rainfall Collection**
 ```python
-collected_liters = rainfall_mm * catchment_area_m2 * runoff_coefficient
+collected_litres = rainfall_mm * catchment_area_m2 * runoff
 Water Usage:
 usage_liters = random between 10–30 L
 Tank capacity: 1000 L
