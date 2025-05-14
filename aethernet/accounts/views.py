@@ -16,14 +16,6 @@ from .forms import CustomUserCreationForm
 logger = logging.getLogger(__name__)
 
 
-# @csrf_exempt  # Disable CSRF protection for this view
-# def get_sensor_data(request):
-#     data = generate_fake_sensor_data()
-#     return JsonResponse({
-#         "sensor_data": data, "decision": evaluate_hvac_decision(data)
-#     })
-
-
 @login_required
 def home(request):
     return render(request, 'accounts/home.html')
@@ -33,12 +25,21 @@ def home(request):
     sensor_response = requests.get(SENSOR_API_URL)
     weather_response = requests.get(WEATHER_API_URL)
 
-    sensor_data = sensor_response.json() if sensor_response.status_code == 200 else {}
-    weather_data = weather_response.json() if weather_response.status_code == 200 else {}
+    if sensor_response.status_code == 200:
+        sensor_data = sensor_response.json()
+    else:
+        sensor_data = {}
+
+    if weather_response.status_code == 200:
+        weather_data = weather_response.json()
+    else:
+        weather_data = {}
 
     return render(request, "accounts/home.html", {
-        "sensor_data": sensor_data, "weather_data": weather_data
-        })
+        "sensor_data": sensor_data,
+        "weather_data": weather_data
+    })
+
 
 
 def register(request):
