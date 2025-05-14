@@ -73,6 +73,12 @@ Manual override takes precedence over automatic decisions.
 ![Dashboard Wireframe](./staticfiles/images/wireframe-dashboard.png)
 ![Charts Wireframe View](./staticfiles/images/charts-wireframe.png)
 
+### Colour Scheme 
+
+![Colour Scheme](./staticfiles/images/colour_scheme.png)
+
+I wanted a futuristic look to the dashboard with the purple representing the company colours and both the Flourescent Cyan and Neon Green being very accessible contrasting colours against the black but also representing the colours of water and sustainability with their 'blue' and 'green' shades.
+
 ### **Real-Time Sensor Updates**
 Runs **every 5 seconds**:
 - Fetches data from `/sensors/api/sensor-data/`
