@@ -2,6 +2,15 @@
 
 This project is a smart environmental control dashboard that integrates live weather data, HVAC decision logic, and a simulated rainwater tank system.
 
+## 📖 Table of Contents
+- [Overview](#overview)
+- [Backend (Python / Django)](#backend-python--django)
+- [Frontend](#frontend)
+- [System Flow](#system-flow)
+- [UI Design & Accessibility](#sustainable-accessible--thematic-ui-design)
+- [Testing](#sensor-data-tests)
+- [Future Features](#future-iterations-and-features)
+
 ---
 
 ## Overview
@@ -13,6 +22,19 @@ This system does the following:
 - Evaluates environmental conditions and makes **HVAC operation decisions**.
 - Allows a **manual override** to redirect rainwater.
 - Displays real-time data and decisions on a web dashboard with charts.
+
+### Scope
+
+AetherNet will provide a real-time dashboard that visualizes environmental data, simulates tank behavior, and applies HVAC logic based on current weather conditions. It does not include hardware integration at this stage or predictive analytic features.
+
+
+### User Stories & Acceptance Criteria
+
+| User Story | Acceptance Criteria | How It Is Met |
+|------------|---------------------|----------------|
+| As a **facility manager**, I want to **see the real-time tank water level**, so that I can **plan usage accordingly**. | - Dashboard displays tank water level as a percentage<br>- Data updates every 5 seconds<br>- Value accurately reflects rain and usage | - `get_sensor_data()` calculates tank level in backend<br>- Frontend fetches data from `/sensors/api/sensor-data/` every 5s<br>- Tank level displayed as `%` and in chart using Chart.js |
+| As a **facility manager**, I want to **manually override the system**, so that I can **redirect water when needed**. | - A button is visible to toggle water redirection<br>- POST request updates system state<br>- Dashboard reflects override status visually and in decision message | - Manual override sends POST to `/sensors/api/manual-override/`<br>- `redirecting_water` flag toggled in backend<br>- UI updates button label and status text accordingly |
+| As a **member of the Green Team**, I want to **view temperature and humidity**, so that I can **understand water tank level and usage context**. | - Temperature and humidity shown on dashboard<br>- Historical chart view available for trends<br>- Values update live every 5 seconds | - API fetch includes `temperature` and `humidity`<br>- DOM and Chart.js display values in real-time<br>- Wireframes support UX for both instant and trend monitoring |
 
 ---
 
