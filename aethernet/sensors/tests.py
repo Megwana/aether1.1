@@ -123,7 +123,9 @@ class SensorDataTests(TestCase):
         # Check if the redirection status is updated
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
-        self.assertEqual(data['new_decision'], "Redirecting excess rainwater to irrigation")
+        self.assertEqual(
+            data['new_decision'], "Redirecting excess rainwater to irrigation"
+            )
 
     @patch('requests.get')
     def test_manual_override_off(self, mock_get):

@@ -9,7 +9,7 @@ redirecting_water = False
 tank_capacity_liters = 1000.0
 current_tank_volume = 500.0
 catchment_area_m2 = 50.0
-runoff_coefficient = 0.8
+runoff = 0.8
 
 # MQTT CONFIG
 MQTT_BROKER = "broker.hivemq.com"
@@ -80,7 +80,9 @@ def get_live_weather():
             return {
                 "temperature": data["main"]["temp"],
                 "humidity": data["main"]["humidity"],
-                "rainfall": any(word in data["weather"][0]["description"].lower() for word in ["rain", "drizzle"]),
+                "rainfall": any(
+                    word in data["weather"][0]["description"].lower() for word
+                    in ["rain", "drizzle"]),
                 "wind_speed": data["wind"]["speed"],
                 "description": data["weather"][0]["description"],
             }
@@ -103,7 +105,7 @@ def get_sensor_data(request):
         if weather_data["rainfall"]:
             # Simulate 1–5mm rainfall
             rainfall_mm = random.uniform(1, 5)
-            collected_liters = rainfall_mm * catchment_area_m2 * runoff_coefficient
+            collected_liters = rainfall_mm * catchment_area_m2 * runoff
             current_tank_volume = min(
                 tank_capacity_liters, current_tank_volume + collected_liters)
         else:
