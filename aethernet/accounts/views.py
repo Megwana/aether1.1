@@ -41,10 +41,13 @@ def home(request):
     })
 
 
-
 def register(request):
     """ Handle user registration and notify them of pending approval """
-    form = CustomUserCreationForm(request.POST) if request.method == 'POST' else CustomUserCreationForm()
+    form = CustomUserCreationForm(request.POST)
+    if request.method == 'POST':
+        form = CustomUserCreationForm(request.POST)
+    else:
+        form = CustomUserCreationForm()
 
     if request.method == 'POST' and form.is_valid():
         with transaction.atomic():
@@ -68,7 +71,10 @@ def logout_view(request):
 
 
 def login_view(request):
-    form = AuthenticationForm(request, data=request.POST) if request.method == 'POST' else AuthenticationForm()
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+    else:
+        form = AuthenticationForm()
 
     if request.method == 'POST':
         username = request.POST.get('username')
