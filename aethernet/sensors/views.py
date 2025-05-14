@@ -6,6 +6,10 @@ from django.views.decorators.csrf import csrf_exempt
 from paho.mqtt.client import Client
 
 redirecting_water = False
+tank_capacity_liters = 1000.0
+current_tank_volume = 500.0
+catchment_area_m2 = 50.0
+runoff_coefficient = 0.8
 
 # MQTT CONFIG
 MQTT_BROKER = "broker.hivemq.com"
@@ -54,12 +58,15 @@ def generate_fake_sensor_data():
 
 # HVAC logic
 def evaluate_hvac_decision(data):
-    if data["humidity"] > 80 and data["rainfall"]:
-        return "Reduce HVAC cooling & store rainwater"
-    elif data["temperature"] < 15:
-        return "Increase heating for comfort"
-    elif data["rainfall"] and data.get("tank_level", 100) > 90:
+    tank_full = data.get("tank_level", 0) > 90
+    raining = data.get("rainfall", False)
+
+    if raining and tank_full:
         return "Redirect excess rainwater to irrigation"
+    elif data["humidity"] > 80 and raining:
+        return "Reduce HVAC cooling & store rainwater"
+    elif data["temperature"] < 10:
+        return "Increase heating for comfort"
     return "Maintain normal HVAC operation"
 
 
@@ -87,22 +94,45 @@ def get_live_weather():
 
 @csrf_exempt
 def get_sensor_data(request):
+    global current_tank_volume  # To modify the global tank volume
+
     weather_data = get_live_weather()
 
     if weather_data:
+        # Simulate rainfall collection or depletion
+        if weather_data["rainfall"]:
+            # Simulate 1–5mm rainfall
+            rainfall_mm = random.uniform(1, 5)
+            collected_liters = rainfall_mm * catchment_area_m2 * runoff_coefficient
+            current_tank_volume = min(
+                tank_capacity_liters, current_tank_volume + collected_liters)
+        else:
+            # Simulate water usage (e.g., 10–30L)
+            usage_liters = random.uniform(10, 30)
+            current_tank_volume = max(0, current_tank_volume - usage_liters)
+
+        tank_level_percent = round((
+            current_tank_volume / tank_capacity_liters) * 100, 1)
+
         sensor_data = {
             'temperature': weather_data["temperature"],
             'humidity': weather_data["humidity"],
             'rainfall': weather_data["rainfall"],
-            'tank_level': round(random.uniform(0, 100), 1),
+            'tank_level': tank_level_percent,
             'hvac_load': round(random.uniform(10, 100), 1),
         }
+
         print("Using LIVE weather data")
     else:
         sensor_data = generate_fake_sensor_data()
         print("Using MOCK sensor data")
 
-    decision = evaluate_hvac_decision(sensor_data)
+    # Decision logic (manual override takes priority)
+    if redirecting_water:
+        decision = "Redirecting excess rainwater to irrigation"
+        + "(manual override)"
+    else:
+        decision = evaluate_hvac_decision(sensor_data)
 
     return JsonResponse({
         'sensor_data': sensor_data,
@@ -110,10 +140,9 @@ def get_sensor_data(request):
     })
 
 
-
 @csrf_exempt
 def manual_override(request):
-    global redirecting_water  # So we can modify the global state
+    global redirecting_water
 
     if request.method == 'POST':
         if redirecting_water:
