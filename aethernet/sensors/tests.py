@@ -1,75 +1,149 @@
 from django.test import TestCase
-from unittest.mock import patch
 from django.urls import reverse
+from unittest.mock import patch
+import json
+from sensors.views import evaluate_hvac_decision
 
 
-# Test case for testing the `get_live_weather` view
-class GetLiveWeatherTestCase(TestCase):
-    # Test the success case when weather data is fetched successfully from the API
-    @patch("requests.get")
-    def test_get_live_weather_success(self, mock_get):
-        # Mocked weather data that would be returned by the external API
-        mock_response = {
-            "main": {"temp": 20, "humidity": 60},
-            "wind": {"speed": 5},
-            "weather": [{"description": "clear sky"}]
-        }
+class SensorDataTests(TestCase):
 
-        # Simulate the mock `requests.get` call returning 
-        # a status code of 200 (OK)
+    @patch('requests.get')
+    def test_get_sensor_data_with_live_weather(self, mock_get):
+        # Mocking the response from the Weather API
         mock_get.return_value.status_code = 200
-        # Simulate the mock response to return the mock weather data
-        mock_get.return_value.json.return_value = mock_response
-
-        # Send a GET request to the `weather_data` URL
-        # (which is mapped to `get_live_weather`)
-        response = self.client.get(reverse("weather_data"))
-
-        # Check if the response status code is 200 (successful)
-        self.assertEqual(response.status_code, 200)
-        # Check if the response contains the 'temperature' field from the mock data
-        self.assertIn("temperature", response.json())
-
-    # Test the failure case when the API fails to return weather data
-    @patch("requests.get")  # Mocking the `requests.get` method to simulate API failure
-    def test_get_live_weather_failure(self, mock_get):
-        # Simulate the mock `requests.get` call returning a status code of 500 (server error)
-        mock_get.return_value.status_code = 500
-
-        # Send a GET request to the `weather_data` URL
-        # (which is mapped to `get_live_weather`)
-        response = self.client.get(reverse("weather_data"))
-
-        # Check if the response status code is 500 (indicating failure)
-        self.assertEqual(response.status_code, 500)
-        # Check if the response contains the 'error' field
-        # (as per the failure response)
-        self.assertIn("error", response.json())
-
-
-# Test case for testing the `get_sensor_data` view
-class GetSensorDataTestCase(TestCase):
-    # Test the sensor data API that generates simulated sensor data
-    @patch("sensors.views.generate_fake_sensor_data")
-    def test_sensor_data_api(self, mock_generate_fake_data):
-        # Mocked sensor data that will be returned
-        # by the fake sensor data generator
-        mock_generate_fake_data.return_value = {
-            "temperature": 22,  # Simulated temperature
-            "humidity": 70,     # Simulated humidity
-            "rainfall": True,   # Simulated rainfall
-            "tank_level": 80,   # Simulated tank level
-            "hvac_load": 50     # Simulated HVAC load
+        mock_get.return_value.json.return_value = {
+            "main": {"temp": 25, "humidity": 60},
+            "weather": [{"description": "clear sky"}],
+            "wind": {"speed": 5}
         }
 
-        # Send a POST request to the `sensor_data`
-        # URL (which is mapped to `get_sensor_data`)
-        response = self.client.post(reverse("sensor_data"))
+        # Mock the random.uniform to have consistent tank volume changes
+        with patch('random.uniform', return_value=3):
+            response = self.client.get(reverse('get_sensor_data'))
 
-        # Check if the response status code is 200 (successful)
+        # Check if the response status is OK
         self.assertEqual(response.status_code, 200)
-        # Check if the response contains the 'sensor_data' field
-        self.assertIn("sensor_data", response.json())
-        # Check if the response contains the 'decision' field
-        # (HVAC decision based on sensor data)
-        self.assertIn("decision", response.json())
+
+        # Parse the JSON response
+        data = json.loads(response.content)
+
+        # Check if sensor data contains expected keys
+        self.assertIn('sensor_data', data)
+        self.assertIn('decision', data)
+
+        # Check the tank level is updated correctly
+        sensor_data = data['sensor_data']
+        self.assertGreaterEqual(sensor_data['tank_level'], 0)
+        self.assertLessEqual(sensor_data['tank_level'], 100)
+
+    @patch('requests.get')
+    def test_get_sensor_data_with_mock_data(self, mock_get):
+        # Simulate failure of the weather API
+        mock_get.side_effect = Exception("Weather API failed")
+
+        # Mock the random.uniform to have consistent tank volume changes
+        with patch('random.uniform', return_value=3):
+            response = self.client.get(reverse('get_sensor_data'))
+
+        # Check if the response status is OK
+        self.assertEqual(response.status_code, 200)
+
+        # Parse the JSON response
+        data = json.loads(response.content)
+
+        # Check if the fallback data is used
+        self.assertIn('sensor_data', data)
+        self.assertIn('decision', data)
+
+        # Check the tank level is updated correctly with fake data
+        sensor_data = data['sensor_data']
+        self.assertGreaterEqual(sensor_data['tank_level'], 0)
+        self.assertLessEqual(sensor_data['tank_level'], 100)
+
+    def test_hvac_decision_rain_and_full_tank(self):
+        sensor_data = {
+            "temperature": 22,
+            "humidity": 50,
+            "rainfall": True,
+            "tank_level": 95,
+            "hvac_load": 50
+        }
+
+        decision = evaluate_hvac_decision(sensor_data)
+        self.assertEqual(decision, "Redirect excess rainwater to irrigation")
+
+    def test_hvac_decision_high_humidity_and_rain(self):
+        sensor_data = {
+            "temperature": 25,
+            "humidity": 85,
+            "rainfall": True,
+            "tank_level": 50,
+            "hvac_load": 50
+        }
+
+        decision = evaluate_hvac_decision(sensor_data)
+        self.assertEqual(decision, "Reduce HVAC cooling & store rainwater")
+
+    def test_hvac_decision_low_temperature(self):
+        sensor_data = {
+            "temperature": 5,
+            "humidity": 50,
+            "rainfall": False,
+            "tank_level": 50,
+            "hvac_load": 50
+        }
+
+        decision = evaluate_hvac_decision(sensor_data)
+        self.assertEqual(decision, "Increase heating for comfort")
+
+    def test_hvac_decision_normal(self):
+        sensor_data = {
+            "temperature": 22,
+            "humidity": 60,
+            "rainfall": False,
+            "tank_level": 50,
+            "hvac_load": 50
+        }
+
+        decision = evaluate_hvac_decision(sensor_data)
+        self.assertEqual(decision, "Maintain normal HVAC operation")
+
+    @patch('requests.get')
+    def test_manual_override_on(self, mock_get):
+        # Mocking the response from the Weather API
+        mock_get.return_value.status_code = 200
+        mock_get.return_value.json.return_value = {
+            "main": {"temp": 25, "humidity": 60},
+            "weather": [{"description": "clear sky"}],
+            "wind": {"speed": 5}
+        }
+
+        response = self.client.post(reverse('manual_override'))
+
+        # Check if the redirection status is updated
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['new_decision'], "Redirecting excess rainwater to irrigation")
+
+    @patch('requests.get')
+    def test_manual_override_off(self, mock_get):
+        # Mocking the response from the Weather API
+        mock_get.return_value.status_code = 200
+        mock_get.return_value.json.return_value = {
+            "main": {"temp": 25, "humidity": 60},
+            "weather": [{"description": "clear sky"}],
+            "wind": {"speed": 5}
+        }
+
+        # First, turn it on
+        self.client.post(reverse('manual_override'))
+
+        # Now turn it off
+        response = self.client.post(reverse('manual_override'))
+
+        # Check if the redirection status is updated
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(
+            data['new_decision'], "Stop redirecting rainwater to avoid overuse"
+            )
