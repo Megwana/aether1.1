@@ -132,7 +132,7 @@ Client → (every 5s) → /sensor-data/
           ↓
 Weather API → Rainfall info → Adjust Tank Volume
           ↓
-Decision logic (or manual override)
+Manual Override 
           ↓
 ← sensor data + decision ← Backend
           ↓
