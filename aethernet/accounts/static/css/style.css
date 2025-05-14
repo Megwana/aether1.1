@@ -192,6 +192,27 @@ footer{
     }
 }
 
+button {
+    display: inline-block;
+    padding: 10px 15px;
+    font-size: 1.6rem;
+    font-weight: 600;
+    border-radius: 5px;
+    background: var(--highlight-color);
+    color: white;
+    border: 2px solid var(--highlight-color);
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+    margin: 10px;
+}
+
+button:hover {
+    color: var(--bg-color);
+    background: var(--accent-color);
+    box-shadow: 0 0 20px var(--accent-color);
+    border: none;
+}
+
 .button {
     display: inline-block;
     padding: 10px 15px;
