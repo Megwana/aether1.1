@@ -1,3 +1,20 @@
+// Get the menu icon, navbar, and navbar links
+const menuIcon = document.getElementById('menu-icon');
+const navbar = document.querySelector('.navbar');
+const navbarLinks = document.querySelectorAll('.navbar a');
+
+// Toggle the active class to show/hide the navbar when the menu icon is clicked
+menuIcon.addEventListener('click', () => {
+    navbar.classList.toggle('active');
+});
+
+// Close the navbar when a link is clicked
+navbarLinks.forEach(link => {
+    link.addEventListener('click', () => {
+        navbar.classList.remove('active'); 
+    });
+});
+
 let temperatureChart, humidityChart, tankLevelChart;
 
 function createCharts() {

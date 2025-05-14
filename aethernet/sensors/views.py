@@ -131,8 +131,10 @@ def get_sensor_data(request):
 
     # Decision logic (manual override takes priority)
     if redirecting_water:
-        decision = "Redirecting excess rainwater to irrigation"
-        + "(manual override)"
+        decision = (
+            "Redirecting excess rainwater to irrigation"
+            " (manual override)"
+        )
     else:
         decision = evaluate_hvac_decision(sensor_data)
 
